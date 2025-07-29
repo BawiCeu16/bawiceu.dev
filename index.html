@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edward Bawi Ceu - Developer</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- AOS for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+</head>
+<body>
+  <!-- AppBar -->
+  <header class="blur-header">
+    <nav>
+      <ul>
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#previews" class="nav-link">Previews</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section id="home" class="hero" data-aos="fade-up">
+    <img class="avatar" src="assets/avatar.svg" alt="Edward Bawi Ceu">
+    <h1>Edward Bawi Ceu</h1>
+    <p>Open Source Developer | Flutter and Tech Enthusiast</p>
+  </section>
+
+  <!-- About -->
+  <section id="about" data-aos="fade-right">
+    <h2>About Me</h2>
+    <p>Love building mobile open-source apps with Flutter and Other tools.</p>
+    <a href="https://github.com/BawiCeu16" target="_blank" class="btn">GitHub Profile</a>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" data-aos="fade-up">
+    <h2>Projects</h2>
+    <div class="project">
+      <img class="app-icon" src="assets/nix_icon.svg" alt="Nix Icon">
+      <h3>nix Music Player</h3>
+      <p>A modern Flutter-based music player.</p>
+      <a href="https://github.com/BawiCeu16/nix" target="_blank" class="btn">GitHub</a>
+    </div>
+    <div class="project">
+      <img class="app-icon" src="assets/task_icon.svg" alt="Task Icon">
+      <h3>task</h3>
+      <p>Task management built with Flutter.</p>
+      <a href="https://github.com/BawiCeu16/task" target="_blank" class="btn">GitHub</a>
+    </div>
+  </section>
+
+  <!-- Previews -->
+  <section id="previews" data-aos="fade-up">
+    <h2>App Design Previews</h2>
+    <div class="preview-gallery">
+      <img src="assets/preview1.svg" alt="Preview 1">
+      <img src="assets/preview2.svg" alt="Preview 2">
+      <img src="assets/preview3.svg" alt="Preview 3">
+      <img src="assets/preview4.svg" alt="Preview 4">
+    </div>
+    <div class="contact-info">
+      <p>Email: bawiceu1428@gmail.com</p>
+      <a href="mailto:bawiceu1428@gmail.com" class="btn">Contact Me</a>
+    </div>
+  </section>
+
+  <!-- AOS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+
+    // Navbar highlight on scroll
+    const sections = document.querySelectorAll("section");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    window.addEventListener("scroll", () => {
+      let current = "";
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (scrollY >= sectionTop) {
+          current = section.getAttribute("id");
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === "#" + current) {
+          link.classList.add("active");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
