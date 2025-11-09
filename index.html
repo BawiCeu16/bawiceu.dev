@@ -1,115 +1,572 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edward Bawi Ceu - Developer</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- AOS for animations -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Minimal Personal Web</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        /* Global Styles & Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Set the primary color as a CSS variable for easy access */
+        :root {
+            --primary-color: #1E5A8E;
+            --dockbg_color: #0e0e0e;
+            --background-color: #000000;
+            --text-color: #FFFFFF;
+        }
+
+        html {
+            scroll-behavior: smooth; 
+            height: 100%;
+            overflow-y: scroll;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        /* Custom Cursor - RETAINED for desktop */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--text-color);
+            mix-blend-mode: difference;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+            z-index: 9999;
+            will-change: transform;
+        }
+
+        /* Full Screen Sections */
+        .screen {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #screen4 { 
+            position: relative;
+            justify-content: flex-start;
+            padding-top: 15vh;
+        }
+        
+        /* --- Screen 1: Avatar & Name Component --- */
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: block;
+            margin: 0 auto 30px;
+        }
+
+        .name {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* --- Floating Dock --- */
+        .dock {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            padding: 10px;
+            background-color: var(--dockbg_color);
+            border-radius: 100px;
+            z-index: 1000;
+            gap: 10px;
+        }
+
+        .dock-btn {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2); 
+            border-radius: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 1.2em;
+            transition: background-color 0.3s ease; 
+        }
+
+        .dock-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- Screen 2: Orbit Animation Styles --- */
+        .orbit-container {
+            position: relative;
+            width: 600px; /* Base desktop size */
+            height: 600px; /* Base desktop size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center-element {
+            width: 130px;
+            height: 130px;
+            z-index: 10;
+            border-radius: 100%;
+            background-color: #071522;
+        }
+
+        .center-logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%; 
+            object-fit: contain;
+        }
+
+        .orbiting-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: orbit 30s linear infinite;  
+        }
+
+        .orbit-item {
+            position: absolute;
+            animation: counterOrbit 30s linear infinite;  
+            --radius: 250px; /* Base desktop radius */
+            --angle: calc(var(--i) * (360deg / 6)); 
+            top: calc(50% + var(--radius) * sin(var(--angle)));
+            left: calc(50% + var(--radius) * cos(var(--angle)));
+            transform: translate(-50%, -50%); 
+        }
+
+        .orbit-item img {
+            width: 100px; /* Base desktop size */
+            height: 100px; /* Base desktop size */
+            border-radius: 50%;
+            object-fit: none;
+            transition: transform 0.3s;
+            cursor: default; 
+        }
+
+        @keyframes orbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes counterOrbit {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        /* --- Screen 3: Portfolio Section Styles (Cleaned) --- */
+        #screen3 {
+            display: flex; 
+            flex-direction: row; 
+            padding: 5vh 5vw; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 5vw; 
+        }
+
+        .app-icon-column {
+            display: flex;
+            flex-direction: column; 
+            gap: 30px; 
+            align-items: center;
+            justify-content: center;
+            flex: 1; 
+            max-width: 200px; 
+        }
+
+        /* The app-icon class now applies to the <a> tag */
+        .app-icon {
+            width: 60px; 
+            height: 60px;
+            overflow: hidden;
+              object-fit: none;
+            cursor: pointer;
+            background-color: transparent; 
+            display: block; /* Important for the anchor tag to behave like a div */
+            text-decoration: none; /* Remove default link underline */
+        }
+
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            display: block;
+            transition: opacity 0.3s ease; 
+        }
+        
+        .app-icon:hover img {
+            opacity: 0.5; 
+        }
+
+        .screenshot-display {
+            flex: 2; 
+            background-color: rgba(255, 255, 255, 0.05); 
+            border-radius: 15px;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 70vh; 
+            max-width: 60vw; 
+            position: relative; 
+            padding: 20px;
+        }
+
+        .screenshot-image-wrapper {
+            max-width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .screenshot-display img {
+            max-width: 100%; 
+            max-height: 100%;
+            object-fit: contain; 
+            transition: opacity 0.3s ease; 
+            display: block;
+        }
+
+        .screenshot-display img:not([src]) {
+            display: none; 
+        }
+
+        .placeholder-text {
+            color: var(--text-color);
+            font-size: 1.5em;
+            text-align: center;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        .screenshot-display img[src] + .placeholder-text {
+            display: none; 
+        }
+
+        /* Removed AI Critique Styles */
+        #critiquePanel, #critiqueButton, .critique-controls {
+            display: none; 
+        }
+        
+        /* ------------------------------------------------ */
+        /* --- Screen 4: Contact Section (Marquee + Minimal Icons) --- */
+        /* ------------------------------------------------ */
+
+        .marquee-container-4 {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            opacity: 0.2;
+        }
+
+        .marquee-content-4 {
+            display: inline-block;
+            padding-left: 100%;
+            font-family: Impact, Charcoal, sans-serif;
+            font-size: 20vw;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: var(--text-color);
+            animation: slow-marquee-animation 100s linear infinite; 
+        }
+
+        @keyframes slow-marquee-animation {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        
+        .minimal-social-links {
+            display: flex;
+            gap: 30px;
+            position: absolute; 
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .minimal-social-link {
+            font-size: 2em;
+            color: var(--text-color); 
+            opacity: 0.4; 
+            transition: color 0.3s ease, opacity 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .minimal-social-link:hover {
+            color: var(--primary-color); 
+            opacity: 1;
+        }
+
+        /* ==================================== */
+        /* ===== MOBILE RESPONSIVENESS ===== */
+        /* ==================================== */
+
+        @media (max-width: 768px) {
+            
+            /* Hide custom cursor on touch devices */
+            .custom-cursor {
+                display: none;
+            }
+
+            .dock {
+                padding: 5px;
+                gap: 5px;
+                bottom: 10px;
+            }
+            .dock-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+            }
+
+            /* --- Screen 2: Skills Orbit --- */
+            .orbit-container {
+                width: 90vw;
+                height: 90vw;
+            }
+            
+            .center-element {
+                width: 100px;
+                height: 100px;
+
+                
+
+            }
+
+            .orbit-item {
+                --radius: 35vw;
+            }
+
+            .orbit-item img {
+                width: 610px;
+                height: 610px;
+            }
+            
+            /* --- Screen 3: Portfolio --- */
+            #screen3 {
+                flex-direction: column;
+                gap: 5vh; 
+                padding: 10vh 5vw;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .app-icon-column {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                max-width: 100%;
+                gap: 15px;
+                
+            }
+
+            .app-icon {
+                width: 70px; 
+                height: 70px;
+                object-fit: none;
+                
+            }
+
+            .screenshot-display {
+                width: 90vw;
+                height: 50vh;
+                max-width: 100%;
+                padding: 10px;
+            }
+            
+            /* --- Screen 4: Contact --- */
+            #screen4 {
+                padding-top: 10vh;
+            }
+
+            .marquee-content-4 {
+                font-size: 25vw;
+                letter-spacing: 2px;
+            }
+            .minimal-social-links {
+                bottom: 10vh;
+                gap: 20px;
+            }
+            .minimal-social-link {
+                font-size: 1.8em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- AppBar -->
-  <header class="blur-header">
-    <nav>
-      <ul>
-        <li><a href="#home" class="nav-link active">Home</a></li>
-        <li><a href="#about" class="nav-link">About</a></li>
-        <li><a href="#projects" class="nav-link">Projects</a></li>
-        <li><a href="#previews" class="nav-link">Previews</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <!-- Hero -->
-  <section id="home" class="hero" data-aos="fade-up">
-    <img class="avatar" src="assets/avatar.svg" alt="Edward Bawi Ceu">
-    <h1>Edward Bawi Ceu</h1>
-    <p>Open Source Developer | Flutter and Tech Enthusiast</p>
-  </section>
+    <div class="custom-cursor"></div>
 
-  <!-- About -->
-  <section id="about" data-aos="fade-right">
-    <h2>About Me</h2>
-    <p>
-      Hi! I’m <strong>Edward Bawi Ceu</strong>, a beginner developer who loves learning and
-      building apps. I mainly use <strong>Flutter</strong> to create simple and useful
-      cross-platform apps for mobile and desktop.
-    </p>
-    <p>
-      Right now, I’m focusing on:
-      <ul>
-        <li>📱 Learning Flutter and Dart for app development</li>
-        <li>🎨 Practicing UI design with Material 3</li>
-        <li>🗂️ Using Provider and SharedPreferences for app data</li>
-        <li>🌐 Sharing my beginner projects on GitHub</li>
-      </ul>
-    </p>
-    <p>
-      I enjoy experimenting with new tools, improving my coding skills,
-      and slowly building real apps. 🚀
-    </p>
-    <a href="https://github.com/BawiCeu16" target="_blank" class="btn">GitHub Profile</a>
-  </section>
-
-
-  <!-- Projects -->
-  <section id="projects" data-aos="fade-up">
-    <h2>Projects</h2>
-    <div class="project">
-      <img class="app-icon" src="assets/nix_icon.svg" alt="Nix Icon">
-      <h3>nix Music Player</h3>
-      <p>A modern Flutter-based music player.</p>
-      <a href="https://github.com/BawiCeu16/nix" target="_blank" class="btn">GitHub</a>
+    <div class="dock">
+        <a href="#screen1" class="dock-btn" title="Home"><i class="ri-home-line"></i></a>
+        <a href="#screen2" class="dock-btn" title="Skills"><i class="ri-tools-line"></i></a>
+        <a href="#screen3" class="dock-btn" title="Portfolio"><i class="ri-folder-open-line"></i></a>
+        <a href="#screen4" class="dock-btn" title="Contact"><i class="ri-mail-line"></i></a>
     </div>
-    <div class="project">
-      <img class="app-icon" src="assets/task_icon.svg" alt="Task Icon">
-      <h3>task</h3>
-      <p>Task management built with Flutter.</p>
-      <a href="https://github.com/BawiCeu16/task" target="_blank" class="btn">GitHub</a>
-    </div>
-  </section>
 
-  <!-- Previews -->
-  <section id="previews" data-aos="fade-up">
-    <h2>App Design Previews</h2>
-    <div class="preview-gallery">
-      <img src="assets/preview1.svg" alt="Preview 1">
-      <img src="assets/preview2.svg" alt="Preview 2">
-      <img src="assets/preview3.svg" alt="Preview 3">
-      <img src="assets/preview4.svg" alt="Preview 4">
-    </div>
-    <div class="contact-info">
-      <p>Email: bawiceu1428@gmail.com</p>
-      <a href="mailto:bawiceu1428@gmail.com" class="btn">Contact Me</a>
-    </div>
-  </section>
+    <section id="screen1" class="screen">
+        <div id="avatar-name-component" class="avatar-container">
+            <div class="avatar" style="background-image: url('assets/avatar.svg'); background-size: cover;"></div>
+            <div class="name">Edward Bawi Ceu</div>
+        </div>
+    </section>
 
-  <!-- AOS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+    <section id="screen2" class="screen">
 
-    // Navbar highlight on scroll
-    const sections = document.querySelectorAll("section");
-    const navLinks = document.querySelectorAll(".nav-link");
+<h3>
+  Tools
+</h3>
 
-    window.addEventListener("scroll", () => {
-      let current = "";
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop - 100;
-        if (scrollY >= sectionTop) {
-          current = section.getAttribute("id");
-        }
-      });
+        <div class="orbit-container">
+            <div class="center-element">
+                <img src="assets/logo.svg" alt="Developer Logo" class="center-logo">
+            </div>
 
-      navLinks.forEach(link => {
-        link.classList.remove("active");
-        if (link.getAttribute("href") === "#" + current) {
-          link.classList.add("active");
-        }
-      });
-    });
-  </script>
+            <div class="orbiting-wrapper">
+                <div class="orbit-item" style="--i: 1;">
+                    <img src="assets/image1.svg" alt="Flutter Skill">
+                </div>
+                <div class="orbit-item" style="--i: 2;">
+                    <img src="assets/image2.svg" alt="Dart Skill">
+                </div>
+                <div class="orbit-item" style="--i: 3;">
+                    <img src="assets/image3.svg" alt="UI/UX Design">
+                </div>
+                <div class="orbit-item" style="--i: 4;">
+                    <img src="assets/image4.svg" alt="Open Source">
+                </div>
+                <div class="orbit-item" style="--i: 5;">
+                    <img src="assets/image5.svg" alt="Music App Dev">
+                </div>
+                <div class="orbit-item" style="--i: 6;">
+                    <img src="assets/image6.svg" alt="Android APK">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="screen3" class="screen">
+        <div class="app-icon-column">
+            <a class="app-icon" href="https://github.com/BawiCeu16/nix" target="_blank" data-screenshot="assets/app_screenshots/nix_screenshot.png">
+                <img src="assets/image5.svg" alt="Nix Music Player Repository">
+            </a>
+            <a class="app-icon" href="https://github.com/BawiCeu16/task" target="_blank" data-screenshot="assets/app_screenshots/example_app_screenshot.png">
+                <img src="assets/image4.svg" alt="Task Tracker Repository">
+            </a>
+            </div>
+        <div class="screenshot-display">
+            <div class="screenshot-image-wrapper">
+                <img id="appScreenshot" src="" alt="App Screenshot">
+                <p class="placeholder-text">Hover over an icon to see the app!</p>
+            </div>
+            
+            </div>
+    </section>
+
+    <section id="screen4" class="screen">
+        <div class="marquee-container-4">
+            <div class="marquee-content-4 unselectable">
+                <span>EDWARD &nbsp;&nbsp;&nbsp;</span>
+                <span>PROGRAMMING &nbsp;&nbsp;&nbsp;</span>
+                <span>UI UX DESIGN &nbsp;&nbsp;&nbsp;</span>
+            </div>
+        </div>
+
+        <div class="minimal-social-links">
+            <a href="https://www.facebook.com/bawi.ceu.3975" target="_blank" class="minimal-social-link" title="Facebook">
+                <i class="ri-facebook-box-line"></i>
+            </a>
+            <a href="mailto:bawiceu1428@gmail.com" class="minimal-social-link" title="Email">
+                <i class="ri-mail-line"></i>
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // --- CLEANED JAVASCRIPT ---
+        
+        const cursor = document.querySelector('.custom-cursor');
+        // Select the new <a> elements
+        const appIcons = document.querySelectorAll('.app-icon'); 
+        const appScreenshot = document.getElementById('appScreenshot');
+        const placeholderText = document.querySelector('.placeholder-text');
+        
+        // Custom Cursor Logic (Desktop Only)
+        document.addEventListener('mousemove', e => {
+            if (window.getComputedStyle(cursor).display !== 'none') {
+                requestAnimationFrame(() => {
+                    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                });
+            }
+        });
+
+        // Smooth scroll for the dock links
+        document.querySelectorAll('.dock-btn').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Portfolio hover logic (Screen 3)
+        // Preload images to prevent flickering on hover
+        const preloadImages = [];
+        appIcons.forEach(icon => {
+            const screenshotPath = icon.dataset.screenshot;
+            const img = new Image();
+            img.src = screenshotPath;
+            preloadImages.push(img);
+        });
+
+        appIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', () => {
+                // Update Screenshot on mouse enter (for desktop hover)
+                appScreenshot.style.opacity = '0'; 
+                setTimeout(() => {
+                    appScreenshot.src = icon.dataset.screenshot;
+                    if (placeholderText) {
+                        placeholderText.style.display = 'none'; 
+                    }
+                    appScreenshot.style.opacity = '1'; 
+                }, 300);
+            });
+            
+            // REMOVED: icon.addEventListener('click', ...)
+            // The click event is now handled by the native <a> tag, opening the GitHub link.
+        });
+
+    </script>
 </body>
 </html>
