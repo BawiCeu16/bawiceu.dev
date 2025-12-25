@@ -523,11 +523,11 @@
         
         // Custom Cursor Logic (Desktop Only)
         document.addEventListener('mousemove', e => {
-            if (window.getComputedStyle(cursor).display !== 'none') {
-                requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                if (window.getComputedStyle(cursor).display !== 'none') {
                     cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                });
-            }
+                }
+            });
         });
 
         // Smooth scroll for the dock links
@@ -551,20 +551,33 @@
         });
 
         appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
+            // Function to update the screenshot
+            const updateScreenshot = (screenshotPath) => {
+                appScreenshot.style.opacity = '0';
                 setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
+                    appScreenshot.src = screenshotPath;
                     if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
+                        placeholderText.style.display = 'none';
                     }
-                    appScreenshot.style.opacity = '1'; 
+                    appScreenshot.style.opacity = '1';
                 }, 300);
+            };
+
+            // Desktop: Hover to see screenshot
+            icon.addEventListener('mouseenter', () => {
+                updateScreenshot(icon.dataset.screenshot);
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
+
+            // Mobile: Tap to see screenshot
+            icon.addEventListener('click', (e) => {
+                // Prevent navigation only if it's a touch device,
+                // allowing the link to work on desktop.
+                const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                if (isTouchDevice) {
+                    e.preventDefault();
+                    updateScreenshot(icon.dataset.screenshot);
+                }
+            });
         });
 
     </script>
