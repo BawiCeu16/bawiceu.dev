@@ -368,8 +368,8 @@
             }
 
             .orbit-item img {
-                width: 610px;
-                height: 610px;
+                width: 60px;
+                height: 60px;
             }
             
             /* --- Screen 3: Portfolio --- */
@@ -513,60 +513,61 @@
     </section>
 
     <script>
-        // --- CLEANED JAVASCRIPT ---
-        
-        const cursor = document.querySelector('.custom-cursor');
-        // Select the new <a> elements
-        const appIcons = document.querySelectorAll('.app-icon'); 
-        const appScreenshot = document.getElementById('appScreenshot');
-        const placeholderText = document.querySelector('.placeholder-text');
-        
-        // Custom Cursor Logic (Desktop Only)
-        document.addEventListener('mousemove', e => {
-            if (window.getComputedStyle(cursor).display !== 'none') {
-                requestAnimationFrame(() => {
-                    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                });
-            }
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CLEANED JAVASCRIPT ---
 
-        // Smooth scroll for the dock links
-        document.querySelectorAll('.dock-btn').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+            const cursor = document.querySelector('.custom-cursor');
+            // Select the new <a> elements
+            const appIcons = document.querySelectorAll('.app-icon');
+            const appScreenshot = document.getElementById('appScreenshot');
+            const placeholderText = document.querySelector('.placeholder-text');
+
+            // Custom Cursor Logic (Desktop Only)
+            document.addEventListener('mousemove', e => {
+                if (window.getComputedStyle(cursor).display !== 'none') {
+                    requestAnimationFrame(() => {
+                        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    });
+                }
+            });
+
+            // Smooth scroll for the dock links
+            document.querySelectorAll('.dock-btn').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
                 });
             });
-        });
 
-        // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
-        const preloadImages = [];
-        appIcons.forEach(icon => {
-            const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
-        });
-
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
-                    }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
+            // Portfolio hover logic (Screen 3)
+            // Preload images to prevent flickering on hover
+            const preloadImages = [];
+            appIcons.forEach(icon => {
+                const screenshotPath = icon.dataset.screenshot;
+                const img = new Image();
+                img.src = screenshotPath;
+                preloadImages.push(img);
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
-        });
 
+            appIcons.forEach(icon => {
+                icon.addEventListener('mouseenter', () => {
+                    // Update Screenshot on mouse enter (for desktop hover)
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300);
+                });
+
+                // REMOVED: icon.addEventListener('click', ...)
+                // The click event is now handled by the native <a> tag, opening the GitHub link.
+            });
+        });
     </script>
 </body>
 </html>
