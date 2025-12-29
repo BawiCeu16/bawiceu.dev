@@ -541,31 +541,60 @@
         });
 
         // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
         const preloadImages = [];
         appIcons.forEach(icon => {
             const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
+            if (screenshotPath) {
+                const img = new Image();
+                img.src = screenshotPath;
+                preloadImages.push(img);
+            }
         });
 
+        let lastTappedIcon = null;
+
         appIcons.forEach(icon => {
+            // --- Desktop Hover Logic ---
             icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
+                // Don't trigger hover if a tap has recently occurred
+                if (window.innerWidth <= 768 && lastTappedIcon !== null) return;
+
+                appScreenshot.style.opacity = '0';
                 setTimeout(() => {
                     appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
-                    }
-                    appScreenshot.style.opacity = '1'; 
+                    if (placeholderText) placeholderText.style.display = 'none';
+                    appScreenshot.style.opacity = '1';
                 }, 300);
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
+
+            // --- Mobile Tap Logic ---
+            icon.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent ghost clicks and link navigation
+
+                // Second tap on the same icon: navigate
+                if (lastTappedIcon === icon) {
+                    window.open(icon.href, '_blank');
+                    lastTappedIcon = null; // Reset tap state
+                    return;
+                }
+
+                // First tap, or tap on a different icon: show screenshot
+                lastTappedIcon = icon;
+                appScreenshot.style.opacity = '0';
+                setTimeout(() => {
+                    appScreenshot.src = icon.dataset.screenshot;
+                    if (placeholderText) placeholderText.style.display = 'none';
+                    appScreenshot.style.opacity = '1';
+                }, 300);
+            });
         });
+
+        // Reset tap state if user clicks elsewhere
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.app-icon')) {
+                lastTappedIcon = null;
+            }
+        }, true); // Use capture to ensure this runs before other click events
 
     </script>
 </body>
