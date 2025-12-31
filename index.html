@@ -562,6 +562,38 @@
                     appScreenshot.style.opacity = '1'; 
                 }, 300);
             });
+
+            icon.addEventListener('mouseleave', () => {
+                appScreenshot.style.opacity = '0';
+                setTimeout(() => {
+                    appScreenshot.src = '';
+                    if (placeholderText) {
+                        placeholderText.style.display = 'block';
+                    }
+                }, 300);
+            });
+
+            // Touch events for mobile
+            icon.addEventListener('touchstart', (e) => {
+                appScreenshot.style.opacity = '0';
+                setTimeout(() => {
+                    appScreenshot.src = icon.dataset.screenshot;
+                    if (placeholderText) {
+                        placeholderText.style.display = 'none';
+                    }
+                    appScreenshot.style.opacity = '1';
+                }, 300);
+            });
+
+            icon.addEventListener('touchend', () => {
+                appScreenshot.style.opacity = '0';
+                setTimeout(() => {
+                    appScreenshot.src = '';
+                    if (placeholderText) {
+                        placeholderText.style.display = 'block';
+                    }
+                }, 300);
+            });
             
             // REMOVED: icon.addEventListener('click', ...)
             // The click event is now handled by the native <a> tag, opening the GitHub link.
