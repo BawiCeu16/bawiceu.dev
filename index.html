@@ -550,21 +550,39 @@
             preloadImages.push(img);
         });
 
+        let currentlyDisplayedIcon = null; // Track the currently displayed icon for mobile tap logic
+
         appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
+            const displayScreenshot = () => {
+                appScreenshot.style.opacity = '0';
                 setTimeout(() => {
                     appScreenshot.src = icon.dataset.screenshot;
                     if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
+                        placeholderText.style.display = 'none';
                     }
-                    appScreenshot.style.opacity = '1'; 
+                    appScreenshot.style.opacity = '1';
                 }, 300);
+            };
+
+            // Desktop hover behavior
+            icon.addEventListener('mouseenter', displayScreenshot);
+
+            // Mobile tap behavior
+            icon.addEventListener('click', (e) => {
+                // Use a media query to detect touch-capable devices
+                if (window.matchMedia("(pointer: coarse)").matches) {
+                    // If the tapped icon is not the one currently displayed...
+                    if (currentlyDisplayedIcon !== icon) {
+                        // ...prevent the link from opening...
+                        e.preventDefault();
+                        // ...display the new screenshot...
+                        displayScreenshot();
+                        // ...and update the state.
+                        currentlyDisplayedIcon = icon;
+                    }
+                    // If the same icon is tapped again, the default link navigation will trigger.
+                }
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
         });
 
     </script>
