@@ -540,32 +540,70 @@
             });
         });
 
-        // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
+        // --- Portfolio Interaction Logic (Screen 3) ---
+
+        // Preload images to prevent flickering
         const preloadImages = [];
         appIcons.forEach(icon => {
             const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
+            if (screenshotPath) {
+                const img = new Image();
+                img.src = screenshotPath;
+                preloadImages.push(img);
+            }
         });
 
+        let tappedIcon = null; // Track the currently tapped icon on touch devices
+
         appIcons.forEach(icon => {
+            // Desktop Hover: Show screenshot on mouse enter
             icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
-                    }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
+                // This check ensures hover doesn't interfere with the tapped state on hybrid devices
+                if (window.matchMedia("(pointer: fine)").matches) {
+                    updateScreenshot(icon.dataset.screenshot);
+                }
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
+
+            // Touch & Click: Handle taps for previews
+            icon.addEventListener('click', (event) => {
+                // Check for coarse pointer (touch devices)
+                if (window.matchMedia("(pointer: coarse)").matches) {
+                    // If this icon is already the tapped one, let the link navigation proceed
+                    if (tappedIcon === icon) {
+                        // Allow default navigation on the second tap
+                        return;
+                    }
+
+                    // This is the first tap on this icon
+                    event.preventDefault(); // Prevent navigating to the link immediately
+                    updateScreenshot(icon.dataset.screenshot);
+                    tappedIcon = icon; // Set this as the currently tapped icon
+
+                    // Reset tappedIcon if user taps elsewhere on the page
+                    document.body.addEventListener('click', function resetTap(e) {
+                        if (!icon.contains(e.target)) {
+                            tappedIcon = null;
+                            document.body.removeEventListener('click', resetTap);
+                        }
+                    }, { once: true });
+
+                }
+                // For fine pointers (mice), the link will navigate directly as default.
+            });
         });
+
+        function updateScreenshot(src) {
+            if (!src) return;
+
+            appScreenshot.style.opacity = '0';
+            setTimeout(() => {
+                appScreenshot.src = src;
+                if (placeholderText) {
+                    placeholderText.style.display = 'none';
+                }
+                appScreenshot.style.opacity = '1';
+            }, 300); // Match CSS transition
+        }
 
     </script>
 </body>
