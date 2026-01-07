@@ -540,32 +540,73 @@
             });
         });
 
-        // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
+        // Portfolio interaction logic (Screen 3)
+        // Preload images to prevent flickering
         const preloadImages = [];
         appIcons.forEach(icon => {
             const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
+            if (screenshotPath) { // Check if the attribute exists
+                const img = new Image();
+                img.src = screenshotPath;
+                preloadImages.push(img);
+            }
         });
 
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+        if (isTouchDevice) {
+            let lastTappedIcon = null;
+
+            // Handle taps on the app icons for touch devices
+            appIcons.forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    // If the tapped icon is not the one currently previewed,
+                    // prevent the link from opening and show its screenshot.
+                    if (lastTappedIcon !== icon) {
+                        e.preventDefault();
+                        lastTappedIcon = icon; // Mark as the currently previewed icon
+
+                        // Update the screenshot display
+                        appScreenshot.style.opacity = '0';
+                        setTimeout(() => {
+                            appScreenshot.src = icon.dataset.screenshot;
+                            if (placeholderText) {
+                                placeholderText.style.display = 'none';
+                            }
+                            appScreenshot.style.opacity = '1';
+                        }, 300); // Sync with CSS fade transition
                     }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
+                    // If the same icon is tapped again, the event is not prevented,
+                    // allowing the link to navigate naturally.
+                });
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
-        });
+
+            // Add a global tap listener to reset the preview state
+            // when the user taps anywhere else on the screen.
+            document.addEventListener('click', (e) => {
+                // Check if the tap was outside of an app icon.
+                // .closest() returns the element itself or the closest ancestor.
+                if (!e.target.closest('.app-icon')) {
+                    lastTappedIcon = null; // Reset the state
+                }
+            }, true); // Use capture phase to ensure this runs before other click listeners.
+
+        } else {
+            // For non-touch (desktop) devices, use the original hover behavior.
+            appIcons.forEach(icon => {
+                icon.addEventListener('mouseenter', () => {
+                    // Update Screenshot on mouse enter
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300); // Sync with CSS fade transition
+                });
+            });
+        }
 
     </script>
 </body>
