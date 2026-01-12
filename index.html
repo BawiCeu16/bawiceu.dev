@@ -251,8 +251,9 @@
             display: block;
         }
 
-        .screenshot-display img:not([src]) {
-            display: none; 
+        .screenshot-display img:not([src]),
+        .screenshot-display img[src=""] {
+            display: none;
         }
 
         .placeholder-text {
@@ -550,21 +551,55 @@
             preloadImages.push(img);
         });
 
+        // --- Portfolio Interaction Logic (Screen 3) ---
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+        let tappedIcon = null;
+
         appIcons.forEach(icon => {
+            // On non-touch devices, the existing hover behavior is perfect.
             icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
-                    }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
+                if (!isTouchDevice) {
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300);
+                }
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
+
+            // On all devices, we handle clicks to enable "tap-to-preview" on mobile.
+            icon.addEventListener('click', (e) => {
+                if (isTouchDevice) {
+                    // If the tapped icon is not the one currently being previewed...
+                    if (tappedIcon !== icon) {
+                        e.preventDefault(); // ...prevent navigation on the first tap.
+
+                        // Manually trigger the screenshot update.
+                        appScreenshot.style.opacity = '0';
+                        setTimeout(() => {
+                            appScreenshot.src = icon.dataset.screenshot;
+                            if (placeholderText) {
+                                placeholderText.style.display = 'none';
+                            }
+                            appScreenshot.style.opacity = '1';
+                        }, 300);
+
+                        tappedIcon = icon; // And mark it as being previewed.
+                    }
+                    // If it's the second tap on the same icon, we don't prevent the
+                    // default action, so the link will navigate as expected.
+                }
+            });
+        });
+
+        // Add a global click listener to reset the preview state if the user taps elsewhere.
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.app-icon')) {
+                tappedIcon = null;
+            }
         });
 
     </script>
