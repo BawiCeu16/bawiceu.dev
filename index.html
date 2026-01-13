@@ -513,60 +513,97 @@
     </section>
 
     <script>
-        // --- CLEANED JAVASCRIPT ---
-        
-        const cursor = document.querySelector('.custom-cursor');
-        // Select the new <a> elements
-        const appIcons = document.querySelectorAll('.app-icon'); 
-        const appScreenshot = document.getElementById('appScreenshot');
-        const placeholderText = document.querySelector('.placeholder-text');
-        
-        // Custom Cursor Logic (Desktop Only)
-        document.addEventListener('mousemove', e => {
-            if (window.getComputedStyle(cursor).display !== 'none') {
-                requestAnimationFrame(() => {
-                    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursor = document.querySelector('.custom-cursor');
+            const appIcons = document.querySelectorAll('.app-icon');
+            const appScreenshot = document.getElementById('appScreenshot');
+            const placeholderText = document.querySelector('.placeholder-text');
+
+            // --- Device Capability Check ---
+            const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+            // --- Custom Cursor Logic (Desktop Only) ---
+            if (!isTouchDevice) {
+                document.addEventListener('mousemove', e => {
+                    requestAnimationFrame(() => {
+                        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    });
                 });
             }
-        });
 
-        // Smooth scroll for the dock links
-        document.querySelectorAll('.dock-btn').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+            // --- Smooth scroll for the dock links ---
+            document.querySelectorAll('.dock-btn').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(this.getAttribute('href'));
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
                 });
             });
-        });
 
-        // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
-        const preloadImages = [];
-        appIcons.forEach(icon => {
-            const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
-        });
+            // --- Portfolio Screenshot Logic ---
+            let lastTappedIcon = null;
 
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
-                    }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
+            // Preload images to prevent flickering
+            const preloadImages = [];
+            appIcons.forEach(icon => {
+                const screenshotPath = icon.dataset.screenshot;
+                if (screenshotPath) {
+                    const img = new Image();
+                    img.src = screenshotPath;
+                    preloadImages.push(img);
+                }
             });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
-        });
 
+            // Function to update the screenshot display
+            const showScreenshot = (icon) => {
+                const screenshotPath = icon.dataset.screenshot;
+                appScreenshot.style.opacity = '0';
+                setTimeout(() => {
+                    appScreenshot.src = screenshotPath;
+                    if (placeholderText) {
+                        placeholderText.style.display = 'none';
+                    }
+                    appScreenshot.style.opacity = '1';
+                }, 300); // Match CSS transition time
+            };
+
+            appIcons.forEach(icon => {
+                // Desktop Hover Logic
+                if (!isTouchDevice) {
+                    icon.addEventListener('mouseenter', () => {
+                        showScreenshot(icon);
+                    });
+                }
+
+                // Combined Desktop Click and Touch 'Tap-to-Preview' Logic
+                icon.addEventListener('click', (event) => {
+                    if (isTouchDevice) {
+                        // For touch devices, always prevent the default click first.
+                        event.preventDefault();
+
+                        if (lastTappedIcon !== icon) {
+                            // This is the first tap on this icon.
+                            showScreenshot(icon);
+                            lastTappedIcon = icon;
+                        } else {
+                            // This is the second tap on the same icon, so navigate.
+                            window.open(icon.href, '_blank');
+                            lastTappedIcon = null; // Reset for the next interaction.
+                        }
+                    }
+                    // For non-touch devices, the default <a> tag behavior proceeds without prevention.
+                });
+            });
+
+            // Reset tapped icon if a user clicks anywhere else on the page.
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('.app-icon')) {
+                    lastTappedIcon = null;
+                }
+            }, true); // Use capture phase to ensure this runs before the icon's click listener.
+        });
     </script>
 </body>
 </html>
