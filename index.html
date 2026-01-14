@@ -540,31 +540,62 @@
             });
         });
 
-        // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
+        // --- Portfolio Interaction Logic (Screen 3) ---
+
+        // Preload images to prevent flickering
         const preloadImages = [];
         appIcons.forEach(icon => {
             const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
+            if (screenshotPath) {
+                const img = new Image();
+                img.src = screenshotPath;
+                preloadImages.push(img);
+            }
         });
 
+        // Check for touch capability
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+        let lastTappedIcon = null;
+
         appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
+            if (isTouchDevice) {
+                // --- TOUCH DEVICE LOGIC: Tap to preview, tap again to open ---
+                icon.addEventListener('click', (e) => {
+                    // If the same icon is tapped again, let the default navigation happen.
+                    if (lastTappedIcon === icon) {
+                        // Reset for next interaction
+                        lastTappedIcon = null;
+                        return; // Proceed with navigation
                     }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
-            });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
+
+                    // This is the first tap on this icon
+                    e.preventDefault(); // Prevent navigation
+                    lastTappedIcon = icon; // Set this as the last tapped icon
+
+                    // Update the screenshot display
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300); // Match CSS transition
+                });
+
+            } else {
+                // --- DESKTOP LOGIC: Hover to preview ---
+                icon.addEventListener('mouseenter', () => {
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300); // Match CSS transition
+                });
+            }
         });
 
     </script>
