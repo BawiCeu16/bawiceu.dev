@@ -550,21 +550,52 @@
             preloadImages.push(img);
         });
 
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+        let tappedIcon = null;
+
         appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
+            if (isTouchDevice) {
+                // --- Touch Device Logic: Tap-to-preview, tap again to open ---
+                icon.addEventListener('click', (event) => {
+                    // If the user taps the *same icon* again, open the link.
+                    // Otherwise, just show the preview.
+                    if (tappedIcon === icon) {
+                        // On the second tap, we let the default navigation happen,
+                        // but since we can't reliably undo preventDefault, we open it manually.
+                        window.open(icon.href, '_blank');
+                        tappedIcon = null; // Reset after navigation
+                        return; // Exit the function
                     }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
-            });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
+
+                    // This is the first tap, or a tap on a different icon.
+                    event.preventDefault(); // Prevent navigation on the first tap.
+                    tappedIcon = icon; // Set the currently tapped icon.
+
+                    // Show the screenshot preview.
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300);
+                });
+
+            } else {
+                // --- Desktop Logic: Hover to preview ---
+                icon.addEventListener('mouseenter', () => {
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300);
+                });
+                // Note: For desktop, the 'click' is handled by the default <a> tag behavior.
+            }
         });
 
     </script>
