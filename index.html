@@ -1,40 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Meta Tags for Character Encoding and Viewport Compliance -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Minimal Personal Web</title>
+
+    <!-- Page Title -->
+    <title>BawiCeu Personal Website</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/c_logo.svg" type="image/png">
+
+    <!-- Remix Icon Library for Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <!-- Google Fonts Preconnection and Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <style>
-        /* Global Styles & Reset */
+        /* =========================================
+           GLOBAL STYLES & RESET
+           ========================================= */
+        /* Reset margins, paddings, and set border-box for all elements */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none; /* Hide default cursor */
+            cursor: none;
+            /* Globally hide cursor to use the custom one */
         }
 
-        /* Set the primary color as a CSS variable for easy access */
+        /* 
+           CSS VARIABLES 
+           Centralized color palette for easy theme maintenance.
+        */
         :root {
             --primary-color: #1E5A8E;
+            /* Main accent color */
             --dockbg_color: #0e0e0e;
+            /* Background for the floating dock */
             --background-color: #000000;
+            /* Main page background */
             --text-color: #FFFFFF;
+            /* Primary text color */
         }
 
+        /* HTML Configuration for smooth scrolling */
         html {
-            scroll-behavior: smooth; 
+            scroll-behavior: smooth;
             height: 100%;
             overflow-y: scroll;
         }
 
+        /* Body styling */
         body {
             font-family: sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
         }
 
-        /* Custom Cursor - RETAINED for desktop */
+        /* =========================================
+           CUSTOM CURSOR COMPONENT
+           ========================================= */
+        /* 
+           A custom circular cursor that follows the mouse.
+           It uses `mix-blend-mode: difference` to invert colors over content.
+        */
         .custom-cursor {
             position: fixed;
             width: 20px;
@@ -43,13 +76,22 @@
             background-color: var(--text-color);
             mix-blend-mode: difference;
             pointer-events: none;
+            /* Ensure clicks pass through to elements below */
             transform: translate(-50%, -50%);
+            /* Center the cursor on the mouse coordinates */
             transition: transform 0.1s ease-out;
+            /* Smooth follow delay */
             z-index: 9999;
             will-change: transform;
         }
 
-        /* Full Screen Sections */
+        /* =========================================
+           SHARED SCREEN STYLES
+           ========================================= */
+        /* 
+           Each section (.screen) takes up the full viewport height.
+           Flexbox is used to center content.
+        */
         .screen {
             height: 100vh;
             width: 100%;
@@ -60,13 +102,16 @@
             overflow: hidden;
         }
 
-        #screen4 { 
+        /* Specific adjustment for the Contact screen */
+        #screen4 {
             position: relative;
             justify-content: flex-start;
             padding-top: 15vh;
         }
-        
-        /* --- Screen 1: Avatar & Name Component --- */
+
+        /* =========================================
+           SCREEN 1: HERO / AVATAR
+           ========================================= */
         .avatar {
             width: 150px;
             height: 150px;
@@ -79,15 +124,21 @@
         .name {
             font-size: 2em;
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--text-color);
         }
 
-        /* --- Floating Dock --- */
+        /* =========================================
+           FLOATING DOCK NAVIGATION
+           ========================================= */
+        /* 
+           Fixed navigation bar at the bottom of the screen.
+        */
         .dock {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
+            /* Center horizontally */
             display: flex;
             padding: 10px;
             background-color: var(--dockbg_color);
@@ -96,10 +147,11 @@
             gap: 10px;
         }
 
+        /* Individual dock buttons */
         .dock-btn {
             width: 40px;
             height: 40px;
-            background-color: rgba(255, 255, 255, 0.2); 
+            background-color: rgba(255, 255, 255, 0.2);
             border-radius: 100px;
             display: flex;
             justify-content: center;
@@ -107,23 +159,27 @@
             text-decoration: none;
             color: var(--text-color);
             font-size: 1.2em;
-            transition: background-color 0.3s ease; 
+            transition: background-color 0.3s ease;
         }
 
         .dock-btn:hover {
             background-color: rgba(255, 255, 255, 0.4);
         }
 
-        /* --- Screen 2: Orbit Animation Styles --- */
+        /* =========================================
+           SCREEN 2: SKILLS ORBIT ANIMATION
+           ========================================= */
+        /* Container for the rotating system */
         .orbit-container {
             position: relative;
-            width: 600px; /* Base desktop size */
-            height: 600px; /* Base desktop size */
+            width: 600px;
+            height: 600px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* Central static element */
         .center-element {
             width: 130px;
             height: 130px;
@@ -135,102 +191,122 @@
         .center-logo {
             width: 100%;
             height: 100%;
-            border-radius: 50%; 
+            border-radius: 50%;
             object-fit: contain;
         }
 
+        /* Wrapper that rotates entire system */
         .orbiting-wrapper {
             position: absolute;
             width: 100%;
             height: 100%;
-            animation: orbit 30s linear infinite;  
+            animation: orbit 30s linear infinite;
         }
 
+        /* Individual orbiting items (planets) */
         .orbit-item {
             position: absolute;
-            animation: counterOrbit 30s linear infinite;  
-            --radius: 250px; /* Base desktop radius */
-            --angle: calc(var(--i) * (360deg / 6)); 
+            /* Counter-rotate to keep items upright while orbiting */
+            animation: counterOrbit 30s linear infinite;
+            --radius: 250px;
+            /* Distance from center */
+            /* Calculate position based on index (--i) */
+            --angle: calc(var(--i) * (360deg / 6));
             top: calc(50% + var(--radius) * sin(var(--angle)));
             left: calc(50% + var(--radius) * cos(var(--angle)));
-            transform: translate(-50%, -50%); 
+            transform: translate(-50%, -50%);
         }
 
         .orbit-item img {
-            width: 100px; /* Base desktop size */
-            height: 100px; /* Base desktop size */
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             object-fit: none;
             transition: transform 0.3s;
-            cursor: default; 
+            cursor: default;
         }
 
+        /* Keyframes for the main orbit rotation */
         @keyframes orbit {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
+        /* Keyframes for counter-rotation to keep icons upright */
         @keyframes counterOrbit {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(-360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
         }
 
-        /* --- Screen 3: Portfolio Section Styles (Cleaned) --- */
+        /* =========================================
+           SCREEN 3: PORTFOLIO / PROJECTS
+           ========================================= */
         #screen3 {
-            display: flex; 
-            flex-direction: row; 
-            padding: 5vh 5vw; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 5vw; 
+            display: flex;
+            flex-direction: row;
+            padding: 5vh 5vw;
+            align-items: center;
+            justify-content: center;
+            gap: 5vw;
         }
 
         .app-icon-column {
             display: flex;
-            flex-direction: column; 
-            gap: 30px; 
+            flex-direction: column;
+            gap: 30px;
             align-items: center;
             justify-content: center;
-            flex: 1; 
-            max-width: 200px; 
+            flex: 1;
+            max-width: 200px;
         }
 
-        /* The app-icon class now applies to the <a> tag */
+        /* Project Icons (act as Links) */
         .app-icon {
-            width: 60px; 
+            width: 60px;
             height: 60px;
             overflow: hidden;
-              object-fit: none;
+            object-fit: none;
             cursor: pointer;
-            background-color: transparent; 
-            display: block; /* Important for the anchor tag to behave like a div */
-            text-decoration: none; /* Remove default link underline */
+            background-color: transparent;
+            display: block;
+            text-decoration: none;
         }
 
         .app-icon img {
             width: 100%;
             height: 100%;
-            object-fit: cover; 
+            object-fit: cover;
             display: block;
-            transition: opacity 0.3s ease; 
-        }
-        
-        .app-icon:hover img {
-            opacity: 0.5; 
+            transition: opacity 0.3s ease;
         }
 
+        .app-icon:hover img {
+            opacity: 0.5;
+        }
+
+        /* Screenshot Display Area */
         .screenshot-display {
-            flex: 2; 
-            background-color: rgba(255, 255, 255, 0.05); 
+            flex: 2;
+            background-color: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            overflow: hidden; 
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 70vh; 
-            max-width: 60vw; 
-            position: relative; 
+            height: 70vh;
+            max-width: 60vw;
+            position: relative;
             padding: 20px;
         }
 
@@ -244,15 +320,15 @@
         }
 
         .screenshot-display img {
-            max-width: 100%; 
+            max-width: 100%;
             max-height: 100%;
-            object-fit: contain; 
-            transition: opacity 0.3s ease; 
+            object-fit: contain;
+            transition: opacity 0.3s ease;
             display: block;
         }
 
         .screenshot-display img:not([src]) {
-            display: none; 
+            display: none;
         }
 
         .placeholder-text {
@@ -262,19 +338,16 @@
             opacity: 0.6;
             transition: opacity 0.3s ease;
         }
-        .screenshot-display img[src] + .placeholder-text {
-            display: none; 
+
+        /* Hide placeholder when an image is displayed */
+        .screenshot-display img[src]+.placeholder-text {
+            display: none;
         }
 
-        /* Removed AI Critique Styles */
-        #critiquePanel, #critiqueButton, .critique-controls {
-            display: none; 
-        }
-        
-        /* ------------------------------------------------ */
-        /* --- Screen 4: Contact Section (Marquee + Minimal Icons) --- */
-        /* ------------------------------------------------ */
-
+        /* =========================================
+           SCREEN 4: CONTACT & MARQUEE
+           ========================================= */
+        /* Scrolling text container */
         .marquee-container-4 {
             width: 100%;
             overflow: hidden;
@@ -283,31 +356,34 @@
             opacity: 0.2;
         }
 
+        /* Infinite scrolling text animation */
         .marquee-content-4 {
             display: inline-block;
             padding-left: 100%;
             font-family: Impact, Charcoal, sans-serif;
-            font-size: 20vw;
+            font-size: 40vw;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 5px;
+            letter-spacing: 0px;
             color: var(--text-color);
-            animation: slow-marquee-animation 100s linear infinite; 
+            animation: slow-marquee-animation 100s linear infinite;
         }
 
         @keyframes slow-marquee-animation {
             0% {
                 transform: translateX(0);
             }
+
             100% {
                 transform: translateX(-100%);
             }
         }
-        
+
+        /* Social Media Links */
         .minimal-social-links {
             display: flex;
             gap: 30px;
-            position: absolute; 
+            position: absolute;
             bottom: 150px;
             left: 50%;
             transform: translateX(-50%);
@@ -316,66 +392,65 @@
 
         .minimal-social-link {
             font-size: 2em;
-            color: var(--text-color); 
-            opacity: 0.4; 
+            color: var(--text-color);
+            opacity: 0.4;
             transition: color 0.3s ease, opacity 0.3s ease;
             text-decoration: none;
         }
-        
+
         .minimal-social-link:hover {
-            color: var(--primary-color); 
+            color: var(--primary-color);
             opacity: 1;
         }
 
-        /* ==================================== */
-        /* ===== MOBILE RESPONSIVENESS ===== */
-        /* ==================================== */
-
+        /* =========================================
+           MOBILE RESPONSIVENESS
+           ========================================= */
         @media (max-width: 768px) {
-            
-            /* Hide custom cursor on touch devices */
+
+            /* Disable custom cursor on mobile to allow native touch interactions */
             .custom-cursor {
                 display: none;
             }
 
+            /* Adjust dock for smaller screens */
             .dock {
                 padding: 5px;
                 gap: 5px;
                 bottom: 10px;
             }
+
             .dock-btn {
                 width: 35px;
                 height: 35px;
                 font-size: 1em;
             }
 
-            /* --- Screen 2: Skills Orbit --- */
+            /* Adjust Orbit Size */
             .orbit-container {
                 width: 90vw;
                 height: 90vw;
             }
-            
+
             .center-element {
                 width: 100px;
                 height: 100px;
-
-                
-
             }
 
             .orbit-item {
                 --radius: 35vw;
+                /* Note: Reduced image size for mobile to prevent overflow */
             }
 
             .orbit-item img {
-                width: 610px;
-                height: 610px;
+                width: 60px;
+                height: 60px;
             }
-            
-            /* --- Screen 3: Portfolio --- */
+
+            /* Stack layout for Portfolio */
             #screen3 {
                 flex-direction: column;
-                gap: 5vh; 
+                gap: 5vh;
                 padding: 10vh 5vw;
                 height: auto;
                 min-height: 100vh;
@@ -387,14 +462,11 @@
                 justify-content: center;
                 max-width: 100%;
                 gap: 15px;
-                
             }
 
             .app-icon {
-                width: 70px; 
+                width: 70px;
                 height: 70px;
-                object-fit: none;
-                
             }
 
             .screenshot-display {
@@ -403,8 +475,8 @@
                 max-width: 100%;
                 padding: 10px;
             }
-            
-            /* --- Screen 4: Contact --- */
+
+            /* Adjust Marquee */
             #screen4 {
                 padding-top: 10vh;
             }
@@ -413,20 +485,25 @@
                 font-size: 25vw;
                 letter-spacing: 2px;
             }
+
             .minimal-social-links {
                 bottom: 10vh;
                 gap: 20px;
             }
+
             .minimal-social-link {
                 font-size: 1.8em;
             }
         }
     </style>
 </head>
+
 <body>
 
+    <!-- Custom Cursor Element -->
     <div class="custom-cursor"></div>
 
+    <!-- Floating Dock Navigation -->
     <div class="dock">
         <a href="#screen1" class="dock-btn" title="Home"><i class="ri-home-line"></i></a>
         <a href="#screen2" class="dock-btn" title="Skills"><i class="ri-tools-line"></i></a>
@@ -434,6 +511,7 @@
         <a href="#screen4" class="dock-btn" title="Contact"><i class="ri-mail-line"></i></a>
     </div>
 
+    <!-- Screen 1: Introduction -->
     <section id="screen1" class="screen">
         <div id="avatar-name-component" class="avatar-container">
             <div class="avatar" style="background-image: url('assets/avatar.svg'); background-size: cover;"></div>
@@ -441,17 +519,16 @@
         </div>
     </section>
 
+    <!-- Screen 2: Skills & Tools -->
     <section id="screen2" class="screen">
-
-<h3>
-  Tools
-</h3>
-
+        <h3>Tools</h3>
         <div class="orbit-container">
+            <!-- Center Logo -->
             <div class="center-element">
                 <img src="assets/logo.svg" alt="Developer Logo" class="center-logo">
             </div>
 
+            <!-- Orbiting Skills Icons -->
             <div class="orbiting-wrapper">
                 <div class="orbit-item" style="--i: 1;">
                     <img src="assets/image1.svg" alt="Flutter Skill">
@@ -475,25 +552,32 @@
         </div>
     </section>
 
+    <!-- Screen 3: Portfolio Projects -->
     <section id="screen3" class="screen">
+        <!-- Project List / Icons -->
         <div class="app-icon-column">
-            <a class="app-icon" href="https://github.com/BawiCeu16/nix" target="_blank" data-screenshot="assets/app_screenshots/nix_screenshot.png">
+            <a class="app-icon" href="https://github.com/BawiCeu16/nix" target="_blank"
+                data-screenshot="assets/app_screenshots/nix_screenshot.png">
                 <img src="assets/image5.svg" alt="Nix Music Player Repository">
             </a>
-            <a class="app-icon" href="https://github.com/BawiCeu16/task" target="_blank" data-screenshot="assets/app_screenshots/task_screenshot.png">
+            <a class="app-icon" href="https://github.com/BawiCeu16/task" target="_blank"
+                data-screenshot="assets/app_screenshots/task_screenshot.png">
                 <img src="assets/image4.svg" alt="Task Tracker Repository">
             </a>
-            </div>
+        </div>
+
+        <!-- Screenshot Preview Area -->
         <div class="screenshot-display">
             <div class="screenshot-image-wrapper">
                 <img id="appScreenshot" src="" alt="App Screenshot">
                 <p class="placeholder-text">Hover over an icon to see the app!</p>
             </div>
-            
-            </div>
+        </div>
     </section>
 
+    <!-- Screen 4: Contact -->
     <section id="screen4" class="screen">
+        <!-- Background Marquee Text -->
         <div class="marquee-container-4">
             <div class="marquee-content-4 unselectable">
                 <span>EDWARD &nbsp;&nbsp;&nbsp;</span>
@@ -502,8 +586,10 @@
             </div>
         </div>
 
+        <!-- Social Links -->
         <div class="minimal-social-links">
-            <a href="https://www.facebook.com/bawi.ceu.3975" target="_blank" class="minimal-social-link" title="Facebook">
+            <a href="https://www.facebook.com/bawi.ceu.3975" target="_blank" class="minimal-social-link"
+                title="Facebook">
                 <i class="ri-facebook-box-line"></i>
             </a>
             <a href="mailto:bawiceu1428@gmail.com" class="minimal-social-link" title="Email">
@@ -513,15 +599,23 @@
     </section>
 
     <script>
-        // --- CLEANED JAVASCRIPT ---
-        
+        /* 
+           =========================================
+           JAVASCRIPT LOGIC
+           =========================================
+        */
+
+        // Element Selection
         const cursor = document.querySelector('.custom-cursor');
-        // Select the new <a> elements
-        const appIcons = document.querySelectorAll('.app-icon'); 
+        const appIcons = document.querySelectorAll('.app-icon');
         const appScreenshot = document.getElementById('appScreenshot');
         const placeholderText = document.querySelector('.placeholder-text');
-        
-        // Custom Cursor Logic (Desktop Only)
+
+        /* 
+           Custom Cursor Logic 
+           Updates cursor position to match mouse coordinates.
+           Enabled only if the cursor element is visible (e.g., desktop).
+        */
         document.addEventListener('mousemove', e => {
             if (window.getComputedStyle(cursor).display !== 'none') {
                 requestAnimationFrame(() => {
@@ -530,7 +624,10 @@
             }
         });
 
-        // Smooth scroll for the dock links
+        /* 
+           Smooth Scrolling for Dock Links
+           Intercepts clicks on dock buttons to smoothly scroll to the target section.
+        */
         document.querySelectorAll('.dock-btn').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -540,33 +637,42 @@
             });
         });
 
-        // Portfolio hover logic (Screen 3)
-        // Preload images to prevent flickering on hover
+        /* 
+           Portfolio Hover Logic (Screen 3)
+           Displays a screenshot when hovering over a project icon.
+        */
+
+        // 1. Preload images to ensure they appear instantly on hover
         const preloadImages = [];
         appIcons.forEach(icon => {
             const screenshotPath = icon.dataset.screenshot;
-            const img = new Image();
-            img.src = screenshotPath;
-            preloadImages.push(img);
+            if (screenshotPath) {
+                const img = new Image();
+                img.src = screenshotPath;
+                preloadImages.push(img);
+            }
         });
 
+        // 2. Add hover event listeners
         appIcons.forEach(icon => {
             icon.addEventListener('mouseenter', () => {
-                // Update Screenshot on mouse enter (for desktop hover)
-                appScreenshot.style.opacity = '0'; 
+                // Fade out current screenshot
+                appScreenshot.style.opacity = '0';
+
+                // After transition, swap source and fade in
                 setTimeout(() => {
                     appScreenshot.src = icon.dataset.screenshot;
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none'; 
-                    }
-                    appScreenshot.style.opacity = '1'; 
-                }, 300);
-            });
-            
-            // REMOVED: icon.addEventListener('click', ...)
-            // The click event is now handled by the native <a> tag, opening the GitHub link.
-        });
 
+                    // Hide placeholder text if it's still visible
+                    if (placeholderText) {
+                        placeholderText.style.display = 'none';
+                    }
+
+                    appScreenshot.style.opacity = '1';
+                }, 300); // Wait for fade-out transition (0.3s)
+            });
+        });
     </script>
 </body>
+
 </html>
