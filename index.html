@@ -327,7 +327,8 @@
             display: block;
         }
 
-        .screenshot-display img:not([src]) {
+        .screenshot-display img:not([src]),
+        .screenshot-display img[src=""] {
             display: none;
         }
 
@@ -340,7 +341,7 @@
         }
 
         /* Hide placeholder when an image is displayed */
-        .screenshot-display img[src]+.placeholder-text {
+        .screenshot-display img[src]:not([src=""]) + .placeholder-text {
             display: none;
         }
 
@@ -653,24 +654,49 @@
             }
         });
 
-        // 2. Add hover event listeners
+        /*
+           Portfolio Interaction Logic (Screen 3)
+           Handles both hover for desktop and tap-to-preview for mobile.
+        */
+
+        // Use a capability check for touch devices
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+        let lastTappedIcon = null;
+
         appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Fade out current screenshot
+            const screenshotPath = icon.dataset.screenshot;
+
+            // Function to display the screenshot
+            const showScreenshot = () => {
+                if (appScreenshot.src.endsWith(screenshotPath)) return;
+
                 appScreenshot.style.opacity = '0';
-
-                // After transition, swap source and fade in
                 setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-
-                    // Hide placeholder text if it's still visible
+                    appScreenshot.src = screenshotPath;
                     if (placeholderText) {
                         placeholderText.style.display = 'none';
                     }
-
                     appScreenshot.style.opacity = '1';
-                }, 300); // Wait for fade-out transition (0.3s)
-            });
+                }, 300);
+            };
+
+            if (isTouchDevice) {
+                // Mobile: Tap-to-preview, tap again to navigate
+                icon.addEventListener('click', e => {
+                    // If this icon is already being previewed, let the link navigate
+                    if (lastTappedIcon === icon) {
+                        return;
+                    }
+
+                    // Otherwise, prevent navigation and show the preview
+                    e.preventDefault();
+                    showScreenshot();
+                    lastTappedIcon = icon; // Remember this icon
+                });
+            } else {
+                // Desktop: Hover to preview
+                icon.addEventListener('mouseenter', showScreenshot);
+            }
         });
     </script>
 </body>
