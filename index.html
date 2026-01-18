@@ -340,7 +340,7 @@
         }
 
         /* Hide placeholder when an image is displayed */
-        .screenshot-display img[src]+.placeholder-text {
+        .screenshot-display img[src]:not([src=""]) + .placeholder-text {
             display: none;
         }
 
@@ -599,78 +599,99 @@
     </section>
 
     <script>
-        /* 
+        /*
            =========================================
            JAVASCRIPT LOGIC
            =========================================
         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element Selection
+            const cursor = document.querySelector('.custom-cursor');
+            const appIcons = document.querySelectorAll('.app-icon');
+            const appScreenshot = document.getElementById('appScreenshot');
 
-        // Element Selection
-        const cursor = document.querySelector('.custom-cursor');
-        const appIcons = document.querySelectorAll('.app-icon');
-        const appScreenshot = document.getElementById('appScreenshot');
-        const placeholderText = document.querySelector('.placeholder-text');
+            /*
+               Custom Cursor Logic
+               Updates cursor position to match mouse coordinates.
+               Enabled only if the cursor element is visible (e.g., desktop).
+            */
+            document.addEventListener('mousemove', e => {
+                if (window.getComputedStyle(cursor).display !== 'none') {
+                    requestAnimationFrame(() => {
+                        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    });
+                }
+            });
 
-        /* 
-           Custom Cursor Logic 
-           Updates cursor position to match mouse coordinates.
-           Enabled only if the cursor element is visible (e.g., desktop).
-        */
-        document.addEventListener('mousemove', e => {
-            if (window.getComputedStyle(cursor).display !== 'none') {
-                requestAnimationFrame(() => {
-                    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                });
-            }
-        });
-
-        /* 
-           Smooth Scrolling for Dock Links
-           Intercepts clicks on dock buttons to smoothly scroll to the target section.
-        */
-        document.querySelectorAll('.dock-btn').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+            /*
+               Smooth Scrolling for Dock Links
+               Intercepts clicks on dock buttons to smoothly scroll to the target section.
+            */
+            document.querySelectorAll('.dock-btn').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
                 });
             });
-        });
 
-        /* 
-           Portfolio Hover Logic (Screen 3)
-           Displays a screenshot when hovering over a project icon.
-        */
+            /*
+               Portfolio Interaction Logic (Screen 3)
+               Handles both hover for desktop and tap-to-preview for touch devices.
+            */
 
-        // 1. Preload images to ensure they appear instantly on hover
-        const preloadImages = [];
-        appIcons.forEach(icon => {
-            const screenshotPath = icon.dataset.screenshot;
-            if (screenshotPath) {
-                const img = new Image();
-                img.src = screenshotPath;
-                preloadImages.push(img);
-            }
-        });
+            // 1. Preload images to ensure they appear instantly
+            const preloadImages = [];
+            appIcons.forEach(icon => {
+                const screenshotPath = icon.dataset.screenshot;
+                if (screenshotPath) {
+                    const img = new Image();
+                    img.src = screenshotPath;
+                    preloadImages.push(img);
+                }
+            });
 
-        // 2. Add hover event listeners
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Fade out current screenshot
+            // 2. Define the function to show a screenshot
+            const showScreenshot = (icon) => {
                 appScreenshot.style.opacity = '0';
-
-                // After transition, swap source and fade in
                 setTimeout(() => {
                     appScreenshot.src = icon.dataset.screenshot;
-
-                    // Hide placeholder text if it's still visible
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none';
-                    }
-
                     appScreenshot.style.opacity = '1';
-                }, 300); // Wait for fade-out transition (0.3s)
-            });
+                }, 300); // Corresponds to the CSS transition duration
+            };
+
+            // 3. Check for touch capability and apply the correct event listeners
+            const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+            if (isTouchDevice) {
+                // Touch device logic: Tap to preview, tap again to navigate
+                let lastTappedIcon = null;
+
+                appIcons.forEach(icon => {
+                    icon.addEventListener('click', (e) => {
+                        // If the same icon is tapped a second time, allow navigation.
+                        if (lastTappedIcon === icon) {
+                            // By not calling e.preventDefault(), the link works as normal.
+                            // We can reset state for clarity, so the *next* tap previews again.
+                            lastTappedIcon = null;
+                            return;
+                        }
+
+                        // If it's the first tap on this icon, prevent navigation and show the preview.
+                        e.preventDefault();
+                        showScreenshot(icon);
+                        lastTappedIcon = icon; // Remember this icon for the next tap.
+                    });
+                });
+            } else {
+                // Desktop (mouse) logic: Hover to preview
+                appIcons.forEach(icon => {
+                    icon.addEventListener('mouseenter', () => {
+                        showScreenshot(icon);
+                    });
+                });
+            }
         });
     </script>
 </body>
