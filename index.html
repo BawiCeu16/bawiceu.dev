@@ -616,6 +616,8 @@
            Updates cursor position to match mouse coordinates.
            Enabled only if the cursor element is visible (e.g., desktop).
         */
+        const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
+
         document.addEventListener('mousemove', e => {
             if (window.getComputedStyle(cursor).display !== 'none') {
                 requestAnimationFrame(() => {
@@ -653,25 +655,54 @@
             }
         });
 
-        // 2. Add hover event listeners
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Fade out current screenshot
-                appScreenshot.style.opacity = '0';
-
-                // After transition, swap source and fade in
-                setTimeout(() => {
-                    appScreenshot.src = icon.dataset.screenshot;
-
-                    // Hide placeholder text if it's still visible
-                    if (placeholderText) {
-                        placeholderText.style.display = 'none';
+        // 2. Add hover/tap event listeners based on device type
+        if (!isTouchDevice()) {
+            // For non-touch devices, use hover behavior
+            appIcons.forEach(icon => {
+                icon.addEventListener('mouseenter', () => {
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300);
+                });
+            });
+        } else {
+            // For touch devices, implement tap-to-preview
+            let currentlyOpen = null;
+            appIcons.forEach(icon => {
+                icon.addEventListener('click', (event) => {
+                    if (currentlyOpen === icon) {
+                        // This is the second tap, so allow navigation
+                        return;
                     }
 
-                    appScreenshot.style.opacity = '1';
-                }, 300); // Wait for fade-out transition (0.3s)
+                    // This is the first tap, so prevent navigation and show preview
+                    event.preventDefault();
+                    currentlyOpen = icon;
+
+                    // Show the screenshot
+                    appScreenshot.style.opacity = '0';
+                    setTimeout(() => {
+                        appScreenshot.src = icon.dataset.screenshot;
+                        if (placeholderText) {
+                            placeholderText.style.display = 'none';
+                        }
+                        appScreenshot.style.opacity = '1';
+                    }, 300);
+                });
             });
-        });
+
+            // Reset the 'currentlyOpen' state if the user taps elsewhere
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('.app-icon')) {
+                    currentlyOpen = null;
+                }
+            });
+        }
     </script>
 </body>
 
