@@ -604,72 +604,94 @@
            JAVASCRIPT LOGIC
            =========================================
         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element Selection
+            const cursor = document.querySelector('.custom-cursor');
+            const appIcons = document.querySelectorAll('.app-icon');
+            const appScreenshot = document.getElementById('appScreenshot');
+            const placeholderText = document.querySelector('.placeholder-text');
+            const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
 
-        // Element Selection
-        const cursor = document.querySelector('.custom-cursor');
-        const appIcons = document.querySelectorAll('.app-icon');
-        const appScreenshot = document.getElementById('appScreenshot');
-        const placeholderText = document.querySelector('.placeholder-text');
+            /*
+               Custom Cursor Logic
+               Updates cursor position to match mouse coordinates.
+               Enabled only if the cursor element is visible (e.g., desktop).
+            */
+            document.addEventListener('mousemove', e => {
+                if (window.getComputedStyle(cursor).display !== 'none') {
+                    requestAnimationFrame(() => {
+                        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                    });
+                }
+            });
 
-        /* 
-           Custom Cursor Logic 
-           Updates cursor position to match mouse coordinates.
-           Enabled only if the cursor element is visible (e.g., desktop).
-        */
-        document.addEventListener('mousemove', e => {
-            if (window.getComputedStyle(cursor).display !== 'none') {
-                requestAnimationFrame(() => {
-                    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                });
-            }
-        });
-
-        /* 
-           Smooth Scrolling for Dock Links
-           Intercepts clicks on dock buttons to smoothly scroll to the target section.
-        */
-        document.querySelectorAll('.dock-btn').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+            /*
+               Smooth Scrolling for Dock Links
+               Intercepts clicks on dock buttons to smoothly scroll to the target section.
+            */
+            document.querySelectorAll('.dock-btn').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
                 });
             });
-        });
 
-        /* 
-           Portfolio Hover Logic (Screen 3)
-           Displays a screenshot when hovering over a project icon.
-        */
+            /*
+               Portfolio Hover Logic (Screen 3)
+               Displays a screenshot when hovering over a project icon.
+            */
 
-        // 1. Preload images to ensure they appear instantly on hover
-        const preloadImages = [];
-        appIcons.forEach(icon => {
-            const screenshotPath = icon.dataset.screenshot;
-            if (screenshotPath) {
-                const img = new Image();
-                img.src = screenshotPath;
-                preloadImages.push(img);
-            }
-        });
+            // 1. Preload images to ensure they appear instantly on hover
+            const preloadImages = [];
+            appIcons.forEach(icon => {
+                const screenshotPath = icon.dataset.screenshot;
+                if (screenshotPath) {
+                    const img = new Image();
+                    img.src = screenshotPath;
+                    preloadImages.push(img);
+                }
+            });
 
-        // 2. Add hover event listeners
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
-                // Fade out current screenshot
+            // Helper function to update the screenshot display
+            const updateScreenshot = (icon) => {
                 appScreenshot.style.opacity = '0';
-
-                // After transition, swap source and fade in
                 setTimeout(() => {
                     appScreenshot.src = icon.dataset.screenshot;
-
-                    // Hide placeholder text if it's still visible
                     if (placeholderText) {
                         placeholderText.style.display = 'none';
                     }
-
                     appScreenshot.style.opacity = '1';
-                }, 300); // Wait for fade-out transition (0.3s)
+                }, 300); // Wait for fade-out transition
+            };
+
+            // 2. Add hover event listeners for desktop
+            appIcons.forEach(icon => {
+                icon.addEventListener('mouseenter', () => {
+                    if (!isTouchDevice) {
+                        updateScreenshot(icon);
+                    }
+                });
+            });
+
+            // 3. Add touch/click logic for portfolio icons
+            let currentlyOpen = null;
+
+            appIcons.forEach(icon => {
+                icon.addEventListener('click', e => {
+                    if (isTouchDevice) {
+                        // If the same icon is clicked again, let the default action (navigation) proceed.
+                        if (currentlyOpen === icon) {
+                            return;
+                        }
+
+                        // If a different icon is clicked, prevent navigation and show the preview.
+                        e.preventDefault();
+                        currentlyOpen = icon;
+                        updateScreenshot(icon);
+                    }
+                });
             });
         });
     </script>
