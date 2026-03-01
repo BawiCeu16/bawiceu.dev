@@ -34,17 +34,50 @@
 
         /* 
            CSS VARIABLES 
-           Centralized color palette for easy theme maintenance.
+           Material 3 Expressive (Light Theme Default)
+           Primary Color: #1E5A8E
         */
         :root {
-            --primary-color: #1E5A8E;
-            /* Main accent color */
-            --dockbg_color: #0e0e0e;
-            /* Background for the floating dock */
-            --background-color: #000000;
-            /* Main page background */
-            --text-color: #FFFFFF;
-            /* Primary text color */
+            --md-sys-color-primary: #1E5A8E;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #D1E4FF;
+            --md-sys-color-on-primary-container: #001D36;
+            --md-sys-color-background: #F8FDFF;
+            --md-sys-color-on-background: #001F25;
+            --md-sys-color-surface: #F8FDFF;
+            --md-sys-color-on-surface: #001F25;
+            --md-sys-color-surface-variant: #DFE2EB;
+            --md-sys-color-on-surface-variant: #43474E;
+            --md-sys-color-outline: #73777F;
+
+            --primary-color: var(--md-sys-color-primary);
+            --background-color: var(--md-sys-color-background);
+            --text-color: var(--md-sys-color-on-background);
+            --dockbg_color: var(--md-sys-color-surface-variant);
+            --surface-color: var(--md-sys-color-surface-variant);
+        }
+
+        /* Material 3 Expressive (Dark Theme) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --md-sys-color-primary: #9ECAFF;
+                --md-sys-color-on-primary: #003258;
+                --md-sys-color-primary-container: #00497D;
+                --md-sys-color-on-primary-container: #D1E4FF;
+                --md-sys-color-background: #001F25;
+                --md-sys-color-on-background: #A6EEFF;
+                --md-sys-color-surface: #001F25;
+                --md-sys-color-on-surface: #A6EEFF;
+                --md-sys-color-surface-variant: #43474E;
+                --md-sys-color-on-surface-variant: #C3C7CF;
+                --md-sys-color-outline: #8D9199;
+
+                --primary-color: var(--md-sys-color-primary);
+                --background-color: var(--md-sys-color-background);
+                --text-color: var(--md-sys-color-on-background);
+                --dockbg_color: var(--md-sys-color-surface-variant);
+                --surface-color: var(--md-sys-color-surface-variant);
+            }
         }
 
         /* HTML Configuration for smooth scrolling */
@@ -56,9 +89,10 @@
 
         /* Body styling */
         body {
-            font-family: sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
+            transition: background-color 0.3s cubic-bezier(0.2, 0, 0, 1), color 0.3s cubic-bezier(0.2, 0, 0, 1);
         }
 
         /* =========================================
@@ -113,18 +147,26 @@
            SCREEN 1: HERO / AVATAR
            ========================================= */
         .avatar {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             background-color: var(--primary-color);
             display: block;
-            margin: 0 auto 30px;
+            margin: 0 auto 40px;
+            border: 4px solid var(--md-sys-color-primary-container);
+            transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
         }
 
         .name {
-            font-size: 2em;
-            font-weight: bold;
+            font-size: 3em;
+            font-weight: 800;
             color: var(--text-color);
+            letter-spacing: -1px;
+            line-height: 1.2;
         }
 
         /* =========================================
@@ -135,35 +177,41 @@
         */
         .dock {
             position: fixed;
-            bottom: 20px;
+            bottom: 32px;
             left: 50%;
             transform: translateX(-50%);
             /* Center horizontally */
             display: flex;
-            padding: 10px;
+            padding: 12px;
             background-color: var(--dockbg_color);
             border-radius: 100px;
             z-index: 1000;
-            gap: 10px;
+            gap: 8px;
+            border: 1px solid var(--md-sys-color-outline);
+            opacity: 0.95;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         /* Individual dock buttons */
         .dock-btn {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.2);
+            width: 48px;
+            height: 48px;
+            background-color: transparent;
             border-radius: 100px;
             display: flex;
             justify-content: center;
             align-items: center;
             text-decoration: none;
             color: var(--text-color);
-            font-size: 1.2em;
-            transition: background-color 0.3s ease;
+            font-size: 1.5em;
+            transition: background-color 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.2s cubic-bezier(0.2, 0, 0, 1);
         }
 
         .dock-btn:hover {
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            transform: scale(1.1);
         }
 
         /* =========================================
@@ -181,11 +229,14 @@
 
         /* Central static element */
         .center-element {
-            width: 130px;
-            height: 130px;
+            width: 160px;
+            height: 160px;
             z-index: 10;
-            border-radius: 100%;
-            background-color: #071522;
+            border-radius: 50%;
+            background-color: var(--md-sys-color-surface-variant);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .center-logo {
@@ -272,33 +323,42 @@
 
         /* Project Icons (act as Links) */
         .app-icon {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             overflow: hidden;
             object-fit: none;
             cursor: pointer;
-            background-color: transparent;
-            display: block;
+            background-color: var(--md-sys-color-surface-variant);
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             text-decoration: none;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), background-color 0.3s cubic-bezier(0.2, 0, 0, 1);
         }
 
         .app-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
             display: block;
             transition: opacity 0.3s ease;
         }
 
+        .app-icon:hover {
+            transform: scale(1.1);
+            background-color: var(--md-sys-color-primary-container);
+        }
+
         .app-icon:hover img {
-            opacity: 0.5;
+            opacity: 0.8;
         }
 
         /* Screenshot Display Area */
         .screenshot-display {
             flex: 2;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
+            background-color: var(--md-sys-color-surface-variant);
+            border-radius: 32px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -307,7 +367,7 @@
             height: 70vh;
             max-width: 60vw;
             position: relative;
-            padding: 20px;
+            padding: 32px;
         }
 
         .screenshot-image-wrapper {
@@ -332,11 +392,13 @@
         }
 
         .placeholder-text {
-            color: var(--text-color);
-            font-size: 1.5em;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 2em;
+            font-weight: 500;
             text-align: center;
-            opacity: 0.6;
+            opacity: 0.8;
             transition: opacity 0.3s ease;
+            letter-spacing: -0.5px;
         }
 
         /* Hide placeholder when an image is displayed */
@@ -353,7 +415,7 @@
             overflow: hidden;
             white-space: nowrap;
             box-sizing: border-box;
-            opacity: 0.2;
+            opacity: 0.15;
         }
 
         /* Infinite scrolling text animation */
@@ -388,19 +450,26 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
+            background-color: var(--md-sys-color-surface-variant);
+            padding: 20px 40px;
+            border-radius: 100px;
         }
 
         .minimal-social-link {
-            font-size: 2em;
-            color: var(--text-color);
-            opacity: 0.4;
-            transition: color 0.3s ease, opacity 0.3s ease;
+            font-size: 2.5em;
+            color: var(--md-sys-color-on-surface-variant);
+            opacity: 0.7;
+            transition: color 0.3s ease, opacity 0.3s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1);
             text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .minimal-social-link:hover {
-            color: var(--primary-color);
+            color: var(--md-sys-color-primary);
             opacity: 1;
+            transform: scale(1.1);
         }
 
         /* =========================================
@@ -569,7 +638,7 @@
         <!-- Screenshot Preview Area -->
         <div class="screenshot-display">
             <div class="screenshot-image-wrapper">
-                <img id="appScreenshot" src="" alt="App Screenshot">
+                <img id="appScreenshot" alt="App Screenshot">
                 <p class="placeholder-text">Hover over an icon to see the app!</p>
             </div>
         </div>
@@ -604,72 +673,106 @@
            JAVASCRIPT LOGIC
            =========================================
         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element Selection
+            const cursor = document.querySelector('.custom-cursor');
+            const appIcons = document.querySelectorAll('.app-icon');
+            const appScreenshot = document.getElementById('appScreenshot');
+            const placeholderText = document.querySelector('.placeholder-text');
 
-        // Element Selection
-        const cursor = document.querySelector('.custom-cursor');
-        const appIcons = document.querySelectorAll('.app-icon');
-        const appScreenshot = document.getElementById('appScreenshot');
-        const placeholderText = document.querySelector('.placeholder-text');
+            /*
+               Custom Cursor Logic
+               Updates cursor position to match mouse coordinates.
+               Enabled only if the cursor element is visible (e.g., desktop).
+               Performance Optimization: Cache cursor visibility on resize instead of querying every mousemove.
+            */
+            let isCursorVisible = window.getComputedStyle(cursor).display !== 'none';
 
-        /* 
-           Custom Cursor Logic 
-           Updates cursor position to match mouse coordinates.
-           Enabled only if the cursor element is visible (e.g., desktop).
-        */
-        document.addEventListener('mousemove', e => {
-            if (window.getComputedStyle(cursor).display !== 'none') {
-                requestAnimationFrame(() => {
-                    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                });
-            }
-        });
+            window.addEventListener('resize', () => {
+                isCursorVisible = window.getComputedStyle(cursor).display !== 'none';
+            });
 
-        /* 
-           Smooth Scrolling for Dock Links
-           Intercepts clicks on dock buttons to smoothly scroll to the target section.
-        */
-        document.querySelectorAll('.dock-btn').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+            document.addEventListener('mousemove', e => {
+                if (isCursorVisible) {
+                    requestAnimationFrame(() => {
+                        // Append translate(-50%, -50%) to preserve CSS-defined centering
+                        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+                    });
+                }
+            });
+
+            /*
+               Smooth Scrolling for Dock Links
+               Intercepts clicks on dock buttons to smoothly scroll to the target section.
+            */
+            document.querySelectorAll('.dock-btn').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
                 });
             });
-        });
 
-        /* 
-           Portfolio Hover Logic (Screen 3)
-           Displays a screenshot when hovering over a project icon.
-        */
+            /*
+               Portfolio Hover Logic (Screen 3)
+               Displays a screenshot when hovering over a project icon.
+            */
 
-        // 1. Preload images to ensure they appear instantly on hover
-        const preloadImages = [];
-        appIcons.forEach(icon => {
-            const screenshotPath = icon.dataset.screenshot;
-            if (screenshotPath) {
-                const img = new Image();
-                img.src = screenshotPath;
-                preloadImages.push(img);
-            }
-        });
+            // 1. Preload images to ensure they appear instantly on hover
+            const preloadImages = [];
+            appIcons.forEach(icon => {
+                const screenshotPath = icon.dataset.screenshot;
+                if (screenshotPath) {
+                    const img = new Image();
+                    img.src = screenshotPath;
+                    preloadImages.push(img);
+                }
+            });
 
-        // 2. Add hover event listeners
-        appIcons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => {
+            // 2. Refactored Hover & Click Event Logic
+            let screenshotTimeout;
+            let isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+            // Update capability check on resize
+            window.addEventListener('resize', () => {
+                isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+            });
+
+            const updateScreenshot = (icon) => {
+                // Cancel any pending transitions to prevent race conditions
+                clearTimeout(screenshotTimeout);
+
                 // Fade out current screenshot
                 appScreenshot.style.opacity = '0';
 
-                // After transition, swap source and fade in
-                setTimeout(() => {
+                // Wait for the fade-out CSS transition to complete (0.3s), then swap source and fade in
+                screenshotTimeout = setTimeout(() => {
                     appScreenshot.src = icon.dataset.screenshot;
 
-                    // Hide placeholder text if it's still visible
+                    // Hide placeholder text if it's still visible (redundant check for safety)
                     if (placeholderText) {
                         placeholderText.style.display = 'none';
                     }
 
+                    // Fade the new image back in
                     appScreenshot.style.opacity = '1';
-                }, 300); // Wait for fade-out transition (0.3s)
+                }, 300);
+            };
+
+            // Attach listeners to all app icons
+            appIcons.forEach(icon => {
+                // Desktop: Show screenshot on hover
+                icon.addEventListener('mouseenter', () => {
+                    if (!isTouchDevice) {
+                        updateScreenshot(icon);
+                    }
+                });
+
+                // Touch & Click fallback: Update screenshot
+                icon.addEventListener('click', () => {
+                    updateScreenshot(icon);
+                });
             });
         });
     </script>
