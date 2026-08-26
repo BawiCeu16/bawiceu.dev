@@ -133,6 +133,7 @@
             text-transform: uppercase;
             letter-spacing: 0px;
             color: var(--text-color);
+            text-align: center;
         }
 
         /* =========================================
@@ -595,8 +596,11 @@
             }
         });
 
-        // 2. Add hover event listeners
+        // 2. Add hover event listeners and disable context menu
         appIcons.forEach(icon => {
+            // Disable native context menu on long press/right click
+            icon.addEventListener('contextmenu', e => e.preventDefault());
+
             icon.addEventListener('mouseenter', () => {
                 // Fade out current screenshot
                 appScreenshot.style.opacity = '0';
